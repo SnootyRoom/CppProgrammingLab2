@@ -13,10 +13,10 @@ jobs:
         os: [ubuntu-latest, windows-latest]
         include:
           - os: ubuntu-latest
-            preset-configure: linux-gcc-debug      
+            preset-configure: linux-gcc-release      
             preset-build: build-linux-release
-            artifact-path: ./out/build/linux-gcc-debug/CppProgrammingLab2
-            test-path: ./out/build/linux-gcc-debug/ip_tests   
+            artifact-path: ./out/build/linux-gcc-release/CppProgrammingLab2
+            test-path: ./out/build/linux-gcc-release/ip_tests   
           - os: windows-latest
             preset-configure: windows-mingw-release
             preset-build: build-windows-release
@@ -24,7 +24,6 @@ jobs:
             test-path: ./out/build/windows-mingw-release/ip_tests.exe 
 
     runs-on: ${{ matrix.os }}
-    permissions: write-all
     
     steps:
       - name: Checkout repository
@@ -35,7 +34,13 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y ninja-build gcc g++ libgtest-dev
-      
+
+      - name: Setup MinGW (Windows)
+        if: matrix.os == 'windows-latest'
+        uses: egor-tensin/setup-mingw@v2
+        with:
+          platform: x64
+
       - name: CMake Configure
         run: cmake --preset ${{ matrix.preset-configure }}
 
@@ -43,8 +48,6 @@ jobs:
         run: cmake --build --preset ${{ matrix.preset-build }}
 
       - name: Run my scrimmage script
-        env:
-          scrimmage-name: Run Unit Tests
         run: |
           echo "Running Google Tests..."
           ${{ matrix.test-path }}
@@ -55,14 +58,30 @@ jobs:
           echo "Run programm with input data"
           ${{ matrix.artifact-path }} < ./data/ip_filter.tsv
 
+      # Сохраняем скомпилированные файлы как артефакты воркфлоу
+      - name: Upload Build Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: binary-${{ matrix.os }}
+          path: ${{ matrix.artifact-path }}
+
+  create-release:
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    permissions: write-all
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+
       - name: Create Release and Upload Assets
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           tag_name: v0.0.${{ github.run_number }}
           name: Release v0.0.${{ github.run_number }}
           draft: false
           prerelease: false
-          files: ${{ matrix.artifact-path }}
-          fail_on_unmatched_files: false
+          files: |
+            binary-ubuntu-latest/*
+            binary-windows-latest/*
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
