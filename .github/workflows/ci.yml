@@ -45,9 +45,20 @@ jobs:
             mingw-w64-x86_64-gcc
             mingw-w64-x86_64-ninja
             mingw-w64-x86_64-gtest
-            
+
       - name: CMake Configure
+        shell: ${{ matrix.os == 'windows-latest' && 'msys2 {0}' || 'bash' }}
         run: cmake --preset ${{ matrix.preset-configure }}
+
+      - name: CMake Build
+        shell: ${{ matrix.os == 'windows-latest' && 'msys2 {0}' || 'bash' }}
+        run: cmake --build --preset ${{ matrix.preset-build }}
+
+      - name: Run my scrimmage script
+        shell: ${{ matrix.os == 'windows-latest' && 'msys2 {0}' || 'bash' }}
+        run: |
+          echo "Running Google Tests..."
+          ${{ matrix.test-path }}
 
       - name: CMake Build
         run: cmake --build --preset ${{ matrix.preset-build }}
