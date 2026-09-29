@@ -45,6 +45,7 @@ jobs:
             mingw-w64-x86_64-gcc
             mingw-w64-x86_64-ninja
             mingw-w64-x86_64-gtest
+            mingw-w64-x86_64-cmake
 
       - name: CMake Configure (Ubuntu)
         if: matrix.os == 'ubuntu-latest'
