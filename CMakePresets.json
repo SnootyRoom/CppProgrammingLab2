@@ -57,6 +57,18 @@
             }
         },
         {
+            "name": "linux-clang-msan",
+            "displayName": "Linux Clang MemorySanitizer",
+            "inherits": "base-linux",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug",
+                "CMAKE_C_COMPILER": "clang",
+                "CMAKE_CXX_COMPILER": "clang++",
+                "CMAKE_CXX_FLAGS_DEBUG": "-fsanitize=memory,undefined -g",
+                "CMAKE_EXE_LINKER_FLAGS": "-fsanitize=memory,undefined"
+            }
+        },
+        {
             "name": "linux-gcc-release",
             "displayName": "Linux GCC Release",
             "inherits": "base-linux",
@@ -73,6 +85,10 @@
         {
             "name": "build-linux-asan",
             "configurePreset": "linux-gcc-asan"
+        },
+        {
+            "name": "build-linux-msan",
+            "configurePreset": "linux-clang-msan"
         },
         {
             "name": "build-linux-release",

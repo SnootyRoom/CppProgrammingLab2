@@ -1,3 +1,4 @@
+#include "ip_utils.h"
 #include <cassert>
 #include <cstdlib>
 #include <iostream>
@@ -6,9 +7,6 @@
 #include <algorithm>
 #include <tuple>
 #include <cstdint>
-
-using ip_tuple = std::tuple<std::uint8_t, std::uint8_t, std::uint8_t, std::uint8_t>;
-
 
 consteval ip_tuple generate_ip(std::uint32_t value)
 {
@@ -26,36 +24,6 @@ consteval ip_tuple generate_ip(std::uint32_t value)
     auto D = static_cast<std::uint8_t>(value & 255);
 
     return {A, B, C, D};
-}
-
-constexpr bool validate_octet(std::uint32_t octet) noexcept
-{
-    return octet <= 255;
-}
-
-// ("",  '.') -> [""]
-// ("11", '.') -> ["11"]
-// ("..", '.') -> ["", "", ""]
-// ("11.", '.') -> ["11", ""]
-// (".11", '.') -> ["", "11"]
-// ("11.22", '.') -> ["11", "22"]
-std::vector<std::string> split(const std::string &str, char d)
-{
-    std::vector<std::string> r;
-
-    std::string::size_type start = 0;
-    auto stop = str.find_first_of(d);
-    while (stop != std::string::npos)
-    {
-        r.push_back(str.substr(start, stop - start));
-
-        start = stop + 1;
-        stop = str.find_first_of(d, start);
-    }
-
-    r.push_back(str.substr(start));
-
-    return r;
 }
 
 int main(int argc, char const *argv[])
