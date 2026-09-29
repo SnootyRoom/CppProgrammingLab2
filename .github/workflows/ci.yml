@@ -34,7 +34,7 @@ jobs:
         if: matrix.os == 'ubuntu-latest'
         run: |
           sudo apt-get update
-          sudo apt-get install -y ninja-build gcc g++ libgtest-dev  # ОБЯЗАТЕЛЬНО ставим libgtest-dev
+          sudo apt-get install -y ninja-build gcc g++ libgtest-dev
       
       - name: CMake Configure
         run: cmake --preset ${{ matrix.preset-configure }}
@@ -42,7 +42,9 @@ jobs:
       - name: CMake Build
         run: cmake --build --preset ${{ matrix.preset-build }}
 
-        scrimmage-name: Run Unit Tests
+      - name: Run my scrimmage script
+        env:
+          scrimmage-name: Run Unit Tests
         run: |
           echo "Running Google Tests..."
           ${{ matrix.test-path }}
@@ -51,7 +53,6 @@ jobs:
         if: matrix.os == 'ubuntu-latest'
         run: |
           echo "Run programm with input data"
-          # Чтобы программа не зависла на чтении cin, передаем ей пустой поток или тестовый файл
           ${{ matrix.artifact-path }} < ./data/ip_filter.tsv
 
       - name: Create Release and Upload Assets
