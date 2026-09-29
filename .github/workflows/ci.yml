@@ -15,12 +15,12 @@ jobs:
           - os: ubuntu-latest
             preset-configure: linux-gcc-release
             preset-build: build-linux-release
-            artifact-path: ./out/build/linux-gcc-release/CppProgramminLab1
+            artifact-path: ./out/build/linux-gcc-release/CppProgramminGLab2
           - os: windows-latest
             preset-configure: windows-mingw-release
             preset-build: build-windows-release
 
-            artifact-path: ./out/build/windows-mingw-release/CppProgramminLab1.exe
+            artifact-path: ./out/build/windows-mingw-release/CppProgramminGLab2.exe
 
     runs-on: ${{ matrix.os }}
     permissions: write-all
