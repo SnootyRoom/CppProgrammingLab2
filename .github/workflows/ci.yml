@@ -1,0 +1,59 @@
+name: 'C++ CI'
+
+on:
+  push:
+    branches:
+      - main
+      - feature/github_actions
+
+jobs:
+  build-and-test:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        include:
+          - os: ubuntu-latest
+            preset-configure: linux-gcc-release
+            preset-build: build-linux-release
+            artifact-path: ./out/build/linux-gcc-release/CppProgramminLab1
+          - os: windows-latest
+            preset-configure: windows-mingw-release
+            preset-build: build-windows-release
+
+            artifact-path: ./out/build/windows-mingw-release/CppProgramminLab1.exe
+
+    runs-on: ${{ matrix.os }}
+    permissions: write-all
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Tools (Ninja)
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ninja-build gcc g++
+      
+      - name: CMake Configure
+        run: cmake --preset ${{ matrix.preset-configure }}
+
+      - name: CMake Build
+        run: cmake --build --preset ${{ matrix.preset-build }}
+
+      - name: Run Program to Test Sanitizers
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          echo "Run programm with sanitizers"
+          ${{ matrix.artifact-path }}
+
+      - name: Create Release and Upload Assets
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v0.0.${{ github.run_number }}
+          name: Release v0.0.${{ github.run_number }}
+          draft: false
+          prerelease: false
+          files: ${{ matrix.artifact-path }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

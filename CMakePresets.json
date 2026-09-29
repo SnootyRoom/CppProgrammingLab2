@@ -1,0 +1,90 @@
+{
+    "version": 8,
+    "configurePresets": [
+        {
+            "name": "base-linux",
+            "hidden": true,
+            "generator": "Ninja",
+            "binaryDir": "${sourceDir}/out/build/${presetName}",
+            "cacheVariables": {
+                "CMAKE_INSTALL_PREFIX": "{sourceDir}/out/install/${presetName}"
+            }
+        },
+        {
+            "name": "base-windows",
+            "hidden": true,
+            "generator": "Ninja",
+            "binaryDir": "${sourceDir}/out/build/${presetName}",
+            "cacheVariables": {
+                "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}",
+                "CMAKE_C_COMPILER": "gcc",
+                "CMAKE_CXX_COMPILER": "g++",
+                "CMAKE_EXE_LINKER_FLAGS": "-static"
+            }
+        },
+        {
+            "name": "windows-mingw-debug",
+            "displayName": "GCC 15.2.0 x86_64-w64-mingw32 (mingw64) debug",
+            "inherits": "base-windows",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug"
+            }
+        },
+        {
+            "name": "windows-mingw-release",
+            "displayName": "GCC 15.2.0 x86_64-w64-mingw32 (mingw64) release",
+            "inherits": "base-windows",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release"
+            }
+        },
+        {
+            "name": "linux-gcc-debug",
+            "displayName": "Linux GCC Debug",
+            "inherits": "base-linux",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug"
+            }
+        },
+        {
+            "name": "linux-gcc-asan",
+            "displayName": "Linux GCC (Address/UB Sanitizers)",
+            "inherits": "base-linux",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug",
+                "CMAKE_C_FLAGS_DEBUG": "-g -fsanitize=address,undefined",
+                "CMAKE_CXX_FLAGS_DEBUG": "-g -fsanitize=address,undefined"
+            }
+        },
+        {
+            "name": "linux-gcc-release",
+            "displayName": "Linux GCC Release",
+            "inherits": "base-linux",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release"
+            }
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "build-linux-debug",
+            "configurePreset": "linux-gcc-debug"
+        },
+        {
+            "name": "build-linux-asan",
+            "configurePreset": "linux-gcc-asan"
+        },
+        {
+            "name": "build-linux-release",
+            "configurePreset": "linux-gcc-release"
+        },
+        {
+            "name": "build-windows-debug",
+            "configurePreset": "windows-mingw-debug"
+        },
+        {
+            "name": "build-windows-release",
+            "configurePreset": "windows-mingw-release"
+        }
+    ]
+}
