@@ -7,9 +7,8 @@
 
 using ip_tuple = std::tuple<std::uint8_t, std::uint8_t, std::uint8_t, std::uint8_t>;
 
-inline consteval ip_tuple generate_ip(std::uint32_t val) {
+inline consteval ip_tuple generate_ip(std::uint32_t value) {
 
-    std::uint32_t value = val;
     
     for(unsigned int i = 0; i < 10000; i++) {
         value ^= value << 13;
