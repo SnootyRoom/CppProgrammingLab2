@@ -37,9 +37,11 @@ jobs:
 
       - name: Setup MinGW (Windows)
         if: matrix.os == 'windows-latest'
-        uses: egor-tensin/setup-mingw@v2
+        uses: msys2/setup-msys2@v2
         with:
-          platform: x64
+          msystem: MINGW64
+          update: true
+          install: mingw-w64-x86_64-gcc mingw-w64-x86_64-ninja
 
       - name: CMake Configure
         run: cmake --preset ${{ matrix.preset-configure }}
