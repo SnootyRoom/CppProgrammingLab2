@@ -46,19 +46,32 @@ jobs:
             mingw-w64-x86_64-ninja
             mingw-w64-x86_64-gtest
 
-      - name: CMake Configure
-        shell: ${{ matrix.os == 'windows-latest' && 'msys2 {0}' || 'bash' }}
+      - name: CMake Configure (Ubuntu)
+        if: matrix.os == 'ubuntu-latest'
         run: cmake --preset ${{ matrix.preset-configure }}
 
-      - name: CMake Build
-        shell: ${{ matrix.os == 'windows-latest' && 'msys2 {0}' || 'bash' }}
+      - name: CMake Build (Ubuntu)
+        if: matrix.os == 'ubuntu-latest'
         run: cmake --build --preset ${{ matrix.preset-build }}
 
-      - name: Run my scrimmage script
-        shell: ${{ matrix.os == 'windows-latest' && 'msys2 {0}' || 'bash' }}
-        run: |
-          echo "Running Google Tests..."
-          ${{ matrix.test-path }}
+      - name: Run Units Tests (Ubuntu)
+        if: matrix.os == 'ubuntu-latest'
+        run: ${{ matrix.test-path }}
+
+      - name: CMake Configure (Windows)
+        if: matrix.os == 'windows-latest'
+        shell: msys2 {0}
+        run: cmake --preset ${{ matrix.preset-configure }}
+
+      - name: CMake Build (Windows)
+        if: matrix.os == 'windows-latest'
+        shell: msys2 {0}
+        run: cmake --build --preset ${{ matrix.preset-build }}
+
+      - name: Run Units Tests (Windows)
+        if: matrix.os == 'windows-latest'
+        shell: msys2 {0}
+        run: ${{ matrix.test-path }}
 
       - name: CMake Build
         run: cmake --build --preset ${{ matrix.preset-build }}
@@ -74,7 +87,6 @@ jobs:
           echo "Run programm with input data"
           ${{ matrix.artifact-path }} < ./data/ip_filter.tsv
 
-      # Сохраняем скомпилированные файлы как артефакты воркфлоу
       - name: Upload Build Artifact
         uses: actions/upload-artifact@v4
         with:
