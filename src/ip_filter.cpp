@@ -7,6 +7,7 @@
 #include <algorithm>
 #include <tuple>
 #include <cstdint>
+#include <format>
 
 
 int main(int argc, char const *argv[])
@@ -37,7 +38,7 @@ int main(int argc, char const *argv[])
             auto o4 = std::stoi(v.at(3));
 
             if (!validate_octet(o1) || !validate_octet(o2) || !validate_octet(o3) || !validate_octet(o4))
-                throw std::runtime_error("Octet out of range in range");
+                throw std::runtime_error(std::format("Invalid ip: {}.{}.{}.{}", o1, o2, o3, o4));
 
             return std::make_tuple(
                 static_cast<std::uint8_t>(o1),
@@ -81,7 +82,6 @@ int main(int argc, char const *argv[])
 
         
 
-        // TODO filter by first byte and output
         // ip = filter(1)
         std::cout<<"Ip filter by first byte\n";
         std::for_each(ip_pool.begin(), ip_pool.end(), [&](const auto &ip){
@@ -95,7 +95,6 @@ int main(int argc, char const *argv[])
         // 1.29.168.152
         // 1.1.234.8
 
-        // TODO filter by first and second bytes and output
         // ip = filter(46, 70)
         std::cout<<"Ip filter by first and second bytes\n";
         std::for_each(ip_pool.begin(), ip_pool.end(), [&](const auto &ip){
@@ -108,7 +107,6 @@ int main(int argc, char const *argv[])
         // 46.70.113.73
         // 46.70.29.76
 
-        // TODO filter by any byte and output
         // ip = filter_any(46)
         std::cout<<"Ip filter by any byte\n";
         std::for_each(ip_pool.begin(), ip_pool.end(), [&](const auto &ip){

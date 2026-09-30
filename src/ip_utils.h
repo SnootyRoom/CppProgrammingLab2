@@ -7,7 +7,7 @@
 
 using ip_tuple = std::tuple<std::uint8_t, std::uint8_t, std::uint8_t, std::uint8_t>;
 
-inline consteval ip_tuple generate_ip(std::uint32_t value) {
+consteval ip_tuple generate_ip(std::uint32_t value) {
 
     
     for(unsigned int i = 0; i < 10000; i++) {
@@ -23,9 +23,9 @@ inline consteval ip_tuple generate_ip(std::uint32_t value) {
     return {A, B, C, D};
 }
 
-constexpr bool validate_octet(std::uint32_t octet) noexcept
+constexpr bool validate_octet(int octet) noexcept
 {
-    return octet <= 255;
+    return octet <= 255 && octet >= 0;
 }
 
 std::vector<std::string> split(const std::string &str, char d);
